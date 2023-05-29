@@ -1,0 +1,379 @@
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import ImagePicker from "react-native-image-picker";
+import OverlayImage from "../components/OverlayImage";
+import CustomButton from "../components/Button";
+import Input from "../components/Input";
+import CustomLink from "../components/Link";
+import Title from "../components/Title";
+import { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { handleCameraPress } from "../utils/camera";
+
+export default function Registration({ onLogin }) {
+  const navigation = useNavigation();
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [avatar, setAvatar] = useState("../img/Rectangle-empty.jpg");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [validationError, setValidationError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [hidden, setHidden] = useState("#F6F6F6");
+
+  //   #F6F6F6
+  // #1b4371
+
+  // const handleChoosePhoto = () => {
+  //   ImagePicker.launchImageLibrary({}, (response) => {
+  //     if (!response.didCancel) {
+  //       // Обработка выбранного изображения
+  //       console.log(response);
+  //     }
+  //   });
+  // };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  useEffect(() => {
+    if (password.length === 0) {
+      setHidden("#F6F6F6");
+    } else {
+      setHidden("#1b4371");
+    }
+  }, [password]);
+
+  const validateName = () => {
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(name)) {
+      alert(
+        "Invalid name: login cannot contain numbers, hyphens, spaces, special characters"
+      );
+      setValidationError("Invalid name");
+    } else {
+      setValidationError(false);
+    }
+  };
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Invalid email: it must contain @ and domain part, invalid space");
+      setValidationError("Invalid email");
+    } else {
+      setValidationError(false);
+    }
+  };
+
+  const validatePassword = () => {
+    if (password.length < 6) {
+      alert("Password should be at least 6 characters");
+      setValidationError("Password should be at least 6 characters");
+    } else {
+      setValidationError(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    validateName();
+    validateEmail();
+    validatePassword();
+
+    if (
+      validationError === false &&
+      name !== "" &&
+      email !== "" &&
+      password !== ""
+    ) {
+      onLogin();
+      console.log(
+        `Form submitted successfully! Name: ${name}, email: ${email}, password: ${password}`
+      );
+    }
+  };
+
+  const handlePhotoAdd = (path) => {
+    setAvatar(`${path}`);
+  };
+
+  const handlePhotoDelete = () => {
+    setAvatar("../img/Rectangle-empty.jpg");
+  };
+
+  const renderImage = () => {
+    if (avatar === "../img/Rectangle-empty.jpg") {
+      //   handlePhotoAdd();
+      return (
+        <Image
+          style={styles.photoImage}
+          source={require("../img/Rectangle-empty.jpg")}
+        />
+      );
+    } else {
+      //   handlePhotoDelete();
+      return (
+        <Image style={styles.photoImage} source={require("../img/Photo.jpg")} />
+      );
+    }
+  };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (event) => {
+        const { height } = event.endCoordinates;
+        setKeyboardHeight(height - 30);
+        setKeyboardOpen(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+        setKeyboardOpen(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const photoImageTop = keyboardOpen ? keyboardHeight - 190 : 270;
+  const psevdoTop = keyboardOpen ? keyboardHeight - 110 : 350;
+
+  const styles = {
+    container: {
+      flex: 1,
+      ...StyleSheet.absoluteFill,
+    },
+    imageBackground: {
+      flex: 1,
+    },
+    overlayContainer: {
+      ...StyleSheet.absoluteFill,
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    photoImage: {
+      width: 120,
+      height: 120,
+      position: "absolute",
+      top: photoImageTop,
+      left: 130,
+      borderRadius: 16,
+    },
+    formContainer: {
+      position: "absolute",
+      top: 32,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    text: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    textColor: {
+      color: "#1B4371",
+    },
+    psevdo: {
+      position: "absolute",
+      top: psevdoTop,
+      left: 263,
+    },
+    afterElement: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      width: 25,
+      height: 25,
+    },
+    afterElementCircle: {
+      position: "absolute",
+      width: 25,
+      height: 25,
+      left: 0,
+      top: 0,
+      backgroundColor: "#fff",
+      borderColor: "#FF6C00",
+      borderWidth: 1,
+      borderRadius: "50%",
+    },
+    afterElementCircleGray: {
+      borderColor: "#E8E8E8",
+    },
+    afterElementUnion: {
+      position: "absolute",
+      width: 25,
+      height: 25,
+      left: 0,
+      top: 0,
+    },
+    afterElementVertical: {
+      position: "absolute",
+      width: 1,
+      height: 13,
+      left: 11,
+      top: 5,
+      backgroundColor: "#FF6C00",
+    },
+    afterElementVerticalGray: {
+      backgroundColor: "#E8E8E8",
+      transform: [{ rotate: "45deg" }],
+    },
+    afterElementHorizontal: {
+      position: "absolute",
+      width: 1,
+      height: 13,
+      left: 11,
+      top: 5,
+      backgroundColor: "#FF6C00",
+      transform: [{ rotate: "-90deg" }],
+    },
+    afterElementHorizontalGray: {
+      backgroundColor: "#E8E8E8",
+      transform: [{ rotate: "-45deg" }],
+    },
+  };
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("../img/Photo-BG.jpg")}
+          style={styles.imageBackground}
+          resizeMode="cover"
+        >
+          <View
+            style={[styles.overlayContainer, { paddingBottom: keyboardHeight }]}
+          >
+            <OverlayImage top={535} />
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+              onPress={() => console.log("Нажата псевдо-кнопка")}
+            >
+              {renderImage()}
+
+              <View style={styles.psevdo}>
+                <View style={styles.afterElement}>
+                  <View
+                    style={[
+                      styles.afterElementCircle,
+                      avatar !== "../img/Rectangle-empty.jpg" &&
+                        styles.afterElementCircleGray,
+                    ]}
+                  >
+                    {/* <TouchableOpacity
+                    style={{ flex: 1 }}
+                    onPress={() => console.log("press")}
+                  > */}
+                    <View style={styles.afterElementUnion}>
+                      <View
+                        style={[
+                          styles.afterElementVertical,
+                          avatar !== "../img/Rectangle-empty.jpg" &&
+                            styles.afterElementVerticalGray,
+                        ]}
+                      />
+                      <View
+                        style={[
+                          styles.afterElementHorizontal,
+                          avatar !== "../img/Rectangle-empty.jpg" &&
+                            styles.afterElementHorizontalGray,
+                        ]}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            <View style={styles.formContainer}>
+              <Title title={"Реєстрація"} top={300} />
+              <View style={{ paddingBottom: keyboardHeight }}>
+                <KeyboardAvoidingView
+                  behavior={Platform.OS == "ios" ? "padding" : "height"}
+                >
+                  <Input
+                    placeholder="Логін"
+                    value={name}
+                    onChangeText={setName}
+                    onBlur={() => {
+                      validateName();
+                    }}
+                  />
+                  <Input
+                    placeholder="Адреса електронної пошти"
+                    value={email}
+                    onChangeText={setEmail}
+                    onBlur={validateEmail}
+                  />
+                  <Input
+                    placeholder="Пароль"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                    onBlur={validatePassword}
+                    style={{ position: "relative" }}
+                  />
+                  <TouchableOpacity
+                    style={{ position: "absolute", top: 150, right: 20 }}
+                    onPress={togglePasswordVisibility}
+                  >
+                    <Text style={{ color: hidden }}>
+                      {showPassword ? "Сховати" : "Показати"}
+                    </Text>
+                  </TouchableOpacity>
+                </KeyboardAvoidingView>
+              </View>
+
+              <CustomButton
+                width={343}
+                text="Зареєструватися"
+                onPress={() => {
+                  console.log("register"), handleSubmit;
+                }}
+              />
+              <View style={styles.text}>
+                <Text style={styles.textColor}>Вже є акаунт?</Text>
+                <CustomLink
+                  color="#1B4371"
+                  top={0}
+                  left={10}
+                  text="Увійти"
+                  onPress={() => navigation.navigate("Login")}
+                />
+              </View>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
