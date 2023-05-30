@@ -1,12 +1,10 @@
-import {
-  NavigationContainer,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-// import { getVariable, setVariable, removeVariable } from "./utils/isLogIn";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import rootReducer from "./redux/store";
 
 import Login from "./Screens/LoginScreen";
 import Registration from "./Screens/RegistrationScreen";
@@ -14,6 +12,7 @@ import PostsScreen from "./Screens/PostsScreen";
 import CreatePostsScreen from "./Screens/CreatePostsScreen";
 import CommentsScreen from "./Screens/CommentsScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
+import MapScreen from "./Screens/MapScreen";
 import { useState } from "react";
 
 const AuthStack = createStackNavigator();
@@ -38,12 +37,12 @@ const AuthNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
 
 const Tab = createBottomTabNavigator();
 const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
+  const navigation = useNavigation();
+
   const handleChange = () => {
     setIsLoggedIn(!isLoggedIn);
   };
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { previousScreen } = route.params;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -113,7 +112,6 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
               style={{ marginLeft: 25 }}
               onPress={() => {
                 navigation.goBack();
-                // navigation.navigate({ key: previousScreen?.previousKey });
               }}
             />
           ),
@@ -142,7 +140,35 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
               style={{ marginLeft: 25 }}
               onPress={() => {
                 navigation.goBack();
-                // navigation.navigate({ key: previousScreen?.previousKey });
+              }}
+            />
+          ),
+          tabBarButton: () => null,
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          title: "Карта",
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerTintColor: "#212121",
+          headerTitleStyle: {
+            fontWeight: "500",
+            fontSize: 18,
+            letterSpacing: -0.4,
+          },
+          headerLeft: () => (
+            <Ionicons
+              name="ios-arrow-back"
+              size={25}
+              color="grey"
+              style={{ marginLeft: 25 }}
+              onPress={() => {
+                navigation.goBack();
               }}
             />
           ),
@@ -160,23 +186,25 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
   );
 };
 
+const store = createStore(rootReducer);
+
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? (
-        <TabNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      ) : (
-        <AuthNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-      )}
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        {isLoggedIn ? (
+          <TabNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        ) : (
+          <AuthNavigator
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+          />
+        )}
+      </NavigationContainer>
+    </Provider>
   );
 };
 
 export default App;
-
-// при клике для перехода к комментрариям
-// onPress={() => {
-//   navigation.navigate('Comments', { previousScreen: route.name });
-// }}

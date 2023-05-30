@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import Input from "../components/InputCreatePost";
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   Text,
   View,
@@ -17,19 +18,43 @@ import CustomButton, { UnactiveButton } from "../components/Button";
 import { ActionSheetIOS } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { setVariable, getVariable } from "../utils/isLogIn";
+import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import { saveLocationAction } from "../redux/locationActions";
 
 export default function CreatePostsScreen() {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
+  const [writtenLocation, setWrittenLocation] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [buttonPressCount, setButtonPressCount] = useState(0);
   const [type, setType] = useState(Camera.Constants.Type.back);
+
+  //   useEffect(() => {
+  //     setName(""), setWrittenLocation("");
+  //   }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      dispatch(saveLocationAction(coords)).catch((error) => {
+        console.log("Ошибка при сохранении местоположения:", error);
+      });
+    })();
+  }, []);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -130,23 +155,15 @@ export default function CreatePostsScreen() {
   };
 
   const handleSubmit = () => {
-    // setVariable("postName", name);
-    // setVariable("postLocation", location);
-    // setVariable("postPhoto", selectedPhoto);
-    // const postName = getVariable("postName");
-    // const postLocation = getVariable("postLocation");
-    // const photo = getVariable("postPhoto");
-    // console.log(postName, postLocation, photo);
-
     navigation.navigate("Posts");
     handleDelete();
   };
   const handleDelete = () => {
     setName("");
-    setLocation("");
+    setWrittenLocation("");
     setSelectedPhoto(null);
 
-    console.log(name, location, selectedPhoto);
+    console.log(name, writtenLocation, selectedPhoto);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -229,8 +246,8 @@ export default function CreatePostsScreen() {
               />
               <Input
                 placeholder="Місцевість..."
-                value={location}
-                onChangeText={setLocation}
+                value={writtenLocation}
+                onChangeText={setWrittenLocation}
               />
               <Ionicons
                 style={{
@@ -244,7 +261,7 @@ export default function CreatePostsScreen() {
               />
             </KeyboardAvoidingView>
           </View>
-          {name !== "" && location !== "" && selectedPhoto !== null ? (
+          {name !== "" && writtenLocation !== "" && selectedPhoto !== null ? (
             <CustomButton text="Опублікувати" onPress={handleSubmit} />
           ) : (
             <UnactiveButton text="Опублікувати" />

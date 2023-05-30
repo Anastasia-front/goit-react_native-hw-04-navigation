@@ -6,7 +6,7 @@ import {
   Platform,
 } from "react-native";
 
-export default function Input({ placeholder, onChangeText }) {
+export default function Input({ placeholder, onChangeText, value }) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -26,6 +26,7 @@ export default function Input({ placeholder, onChangeText }) {
         onBlur={handleBlur}
         placeholder={placeholder}
         onChangeText={onChangeText}
+        value={value}
       />
     </KeyboardAvoidingView>
   );

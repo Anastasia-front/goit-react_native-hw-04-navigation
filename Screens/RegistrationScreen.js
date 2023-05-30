@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import ImagePicker from "react-native-image-picker";
+// import PsevdoButton from "../components/PsevdoButton";
+// import ImagePicker from "react-native-image-picker";
 import OverlayImage from "../components/OverlayImage";
 import CustomButton from "../components/Button";
 import Input from "../components/Input";
@@ -18,11 +19,14 @@ import CustomLink from "../components/Link";
 import Title from "../components/Title";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { handleCameraPress } from "../utils/camera";
+import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
+import { ActionSheetIOS } from "react-native";
 
 export default function Registration({ onLogin }) {
   const navigation = useNavigation();
 
+  const [buttonPressCount, setButtonPressCount] = useState(0);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [avatar, setAvatar] = useState("../img/Rectangle-empty.jpg");
@@ -35,15 +39,6 @@ export default function Registration({ onLogin }) {
 
   //   #F6F6F6
   // #1b4371
-
-  // const handleChoosePhoto = () => {
-  //   ImagePicker.launchImageLibrary({}, (response) => {
-  //     if (!response.didCancel) {
-  //       // Обработка выбранного изображения
-  //       console.log(response);
-  //     }
-  //   });
-  // };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -106,17 +101,8 @@ export default function Registration({ onLogin }) {
     }
   };
 
-  const handlePhotoAdd = (path) => {
-    setAvatar(`${path}`);
-  };
-
-  const handlePhotoDelete = () => {
-    setAvatar("../img/Rectangle-empty.jpg");
-  };
-
   const renderImage = () => {
     if (avatar === "../img/Rectangle-empty.jpg") {
-      //   handlePhotoAdd();
       return (
         <Image
           style={styles.photoImage}
@@ -124,10 +110,46 @@ export default function Registration({ onLogin }) {
         />
       );
     } else {
-      //   handlePhotoDelete();
-      return (
-        <Image style={styles.photoImage} source={require("../img/Photo.jpg")} />
+      return <Image style={styles.photoImage} source={{ uri: avatar }} />;
+    }
+  };
+
+  const handleCameraPress = async () => {
+    if (buttonPressCount === 0) {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options: ["Выбрать из галереи", "Отмена"],
+          cancelButtonIndex: 1,
+        },
+        async (buttonIndex) => {
+          if (buttonIndex === 0) {
+            const { status } =
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status === "granted") {
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+              });
+
+              if (!result.canceled) {
+                const selectedAsset = await MediaLibrary.createAssetAsync(
+                  result.assets[0].uri
+                );
+                const selectedUri = await MediaLibrary.getAssetInfoAsync(
+                  selectedAsset
+                );
+                setAvatar(selectedUri.uri);
+                setButtonPressCount(1);
+              }
+            }
+          }
+        }
       );
+    } else {
+      setAvatar("../img/Rectangle-empty.jpg");
+      setButtonPressCount(0);
     }
   };
 
@@ -136,7 +158,7 @@ export default function Registration({ onLogin }) {
       "keyboardDidShow",
       (event) => {
         const { height } = event.endCoordinates;
-        setKeyboardHeight(height - 30);
+        setKeyboardHeight(height - 20);
         setKeyboardOpen(true);
       }
     );
@@ -155,8 +177,8 @@ export default function Registration({ onLogin }) {
     };
   }, []);
 
-  const photoImageTop = keyboardOpen ? keyboardHeight - 190 : 270;
-  const psevdoTop = keyboardOpen ? keyboardHeight - 110 : 350;
+  const photoImageTop = keyboardOpen ? keyboardHeight - 200 : 270;
+  const psevdoTop = keyboardOpen ? keyboardHeight - 120 : 350;
 
   const styles = {
     container: {
@@ -269,53 +291,42 @@ export default function Registration({ onLogin }) {
             style={[styles.overlayContainer, { paddingBottom: keyboardHeight }]}
           >
             <OverlayImage top={535} />
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                position: "absolute",
-                top: 0,
-                left: 0,
-              }}
-              onPress={() => console.log("Нажата псевдо-кнопка")}
-            >
-              {renderImage()}
 
-              <View style={styles.psevdo}>
-                <View style={styles.afterElement}>
-                  <View
-                    style={[
-                      styles.afterElementCircle,
-                      avatar !== "../img/Rectangle-empty.jpg" &&
-                        styles.afterElementCircleGray,
-                    ]}
-                  >
-                    {/* <TouchableOpacity
-                    style={{ flex: 1 }}
-                    onPress={() => console.log("press")}
-                  > */}
-                    <View style={styles.afterElementUnion}>
-                      <View
-                        style={[
-                          styles.afterElementVertical,
-                          avatar !== "../img/Rectangle-empty.jpg" &&
-                            styles.afterElementVerticalGray,
-                        ]}
-                      />
-                      <View
-                        style={[
-                          styles.afterElementHorizontal,
-                          avatar !== "../img/Rectangle-empty.jpg" &&
-                            styles.afterElementHorizontalGray,
-                        ]}
-                      />
-                    </View>
+            {renderImage()}
+
+            <View style={styles.psevdo}>
+              <View style={styles.afterElement}>
+                <View
+                  style={[
+                    styles.afterElementCircle,
+                    avatar !== "../img/Rectangle-empty.jpg" &&
+                      styles.afterElementCircleGray,
+                  ]}
+                >
+                  <View style={styles.afterElementUnion}>
+                    <View
+                      style={[
+                        styles.afterElementVertical,
+                        avatar !== "../img/Rectangle-empty.jpg" &&
+                          styles.afterElementVerticalGray,
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.afterElementHorizontal,
+                        avatar !== "../img/Rectangle-empty.jpg" &&
+                          styles.afterElementHorizontalGray,
+                      ]}
+                    />
                   </View>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
 
             <View style={styles.formContainer}>
-              <Title title={"Реєстрація"} top={300} />
+              <TouchableOpacity onPress={handleCameraPress}>
+                <Title title={"Реєстрація"} top={310} />
+              </TouchableOpacity>
               <View style={{ paddingBottom: keyboardHeight }}>
                 <KeyboardAvoidingView
                   behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -356,9 +367,7 @@ export default function Registration({ onLogin }) {
               <CustomButton
                 width={343}
                 text="Зареєструватися"
-                onPress={() => {
-                  console.log("register"), handleSubmit;
-                }}
+                onPress={handleSubmit}
               />
               <View style={styles.text}>
                 <Text style={styles.textColor}>Вже є акаунт?</Text>

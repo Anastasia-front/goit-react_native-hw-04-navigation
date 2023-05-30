@@ -9,11 +9,6 @@ export default function Post({ img, title, location }) {
   const route = useRoute();
   //   const { previousScreen } = route.params;
 
-  //   const name = getVariable("postName");
-  //   const location = getVariable("postLocation");
-  //   const photo = getVariable("postPhoto");
-  //   console.log(name, location, photo);
-
   const [comments, setComments] = useState(3);
   const [likes, setLikes] = useState(0);
   const [numberOfClicks, setNumberOfClicks] = useState(0);
@@ -62,8 +57,13 @@ export default function Post({ img, title, location }) {
           </View>
 
           <View style={styles.row}>
-            <Ionicons name="navigate" size={20} color="#BDBDBD" />
-            <TouchableOpacity>
+            <Ionicons
+              name="navigate"
+              size={20}
+              color="#BDBDBD"
+              onPress={() => navigation.navigate("Map")}
+            />
+            <TouchableOpacity onPress={() => navigation.navigate("Map")}>
               <Text style={styles.location}>{location}</Text>
             </TouchableOpacity>
           </View>
