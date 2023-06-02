@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import locationReducer from "./locationReducer";
+import postReducer from "./post/postReducer";
+import authReducer from "./auth/authReducer";
 
 const rootReducer = combineReducers({
-  location: locationReducer,
+  post: postReducer,
+  auth: authReducer,
   // Другие редюсеры вашего приложения
 });
 

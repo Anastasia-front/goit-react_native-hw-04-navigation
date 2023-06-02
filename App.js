@@ -6,14 +6,15 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import rootReducer from "./redux/store";
 
-import Login from "./Screens/LoginScreen";
-import Registration from "./Screens/RegistrationScreen";
-import PostsScreen from "./Screens/PostsScreen";
-import CreatePostsScreen from "./Screens/CreatePostsScreen";
-import CommentsScreen from "./Screens/CommentsScreen";
-import ProfileScreen from "./Screens/ProfileScreen";
-import MapScreen from "./Screens/MapScreen";
+import Login from "./src/Screens/LoginScreen";
+import Registration from "./src/Screens/RegistrationScreen";
+import PostsScreen from "./src/Screens/PostsScreen";
+import CreatePostsScreen from "./src/Screens/CreatePostsScreen";
+import CommentsScreen from "./src/Screens/CommentsScreen";
+import ProfileScreen from "./src/Screens/ProfileScreen";
+import MapScreen from "./src/Screens/MapScreen";
 import { useState } from "react";
+import { authStateChanged, updateUserProfile } from "./firebase/authorization";
 
 const AuthStack = createStackNavigator();
 const AuthNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
@@ -189,7 +190,7 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
 const store = createStore(rootReducer);
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(authStateChanged());
 
   return (
     <Provider store={store}>
