@@ -2,10 +2,11 @@ import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "./config";
 
 export const writeDataToFirestore = async () => {
-  const collectionRef = collection(db, "post");
+  const collectionRef = collection(db, "user");
   const data = {
-    name: "jhgckhg",
-    location: "1815",
+    email: "Ada",
+    name: "Lovelace",
+    password: "1815",
     photo: "tbrtnb",
   };
   try {

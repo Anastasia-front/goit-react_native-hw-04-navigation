@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import Input from "../components/InputCreatePost";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -28,13 +28,6 @@ import {
   savePostPhoto,
 } from "../../redux/post/postActions";
 
-// import { LoaderScreen } from "../../Screens/LoaderScreen";
-// import { useSelector } from 'react-redux';
-// import { selectStateUserId } from '../../../redux/selectors';
-// import { db, myStorage } from "../../firebase/config";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { doc, setDoc, Timestamp } from "firebase/firestore";
-
 export default function CreatePostsScreen() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -46,44 +39,16 @@ export default function CreatePostsScreen() {
   const [cameraRef, setCameraRef] = useState(null);
   const [buttonPressCount, setButtonPressCount] = useState(0);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  // const userId = useSelector(selectStateUserId);
-  // const [isShowLoader, setIsShowLoader] = useState(false);
 
-  // const uploadPostToServer = async () => {
-  //   setIsShowLoader(true);
-  //   // hideKeyboard();
+  const handleDelete = () => {
+    setName("");
+    setWrittenLocation("");
+    setSelectedPhoto(null);
+  };
 
-  //   const uniquePostId = Date.now().toString();
-
-  //   try {
-  //     // const location = await getLocation();
-  //     // console.log('location ', location);
-  //     // const photo = await uploadPhotoToServer();
-  //     const postRef = doc(db, "posts", uniquePostId);
-
-  //     await setDoc(postRef, {
-  //       selectedPhoto,
-  //       // userId,
-  //       titlePost: name,
-  //       writtenLocation,
-  //       // location: state.location ? state.location : {},
-  //       createdAt: Timestamp.fromDate(new Date()),
-  //       updatedAt: Timestamp.fromDate(new Date()),
-  //     });
-  //   } catch (error) {
-  //     console.log("uploadPostToServer ===>>", error);
-  //   }
-  //   // finally {
-  //   //   // setState(INITIAL_POST);
-  //   //   // setIsDirtyForm(false);
-  //   //   // setIsShowLoader(false);
-  //   //   navigation.navigate('PostsScreen', { screen: 'Posts' });
-  //   // }
-  // };
-
-  // if (isShowLoader) {
-  //   return <LoaderScreen />;
-  // }
+  useEffect(() => {
+    handleDelete();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -204,18 +169,10 @@ export default function CreatePostsScreen() {
   const handleSubmit = () => {
     navigation.navigate("Posts");
     handleDelete();
-    // uploadPostToServer();
     writeDataToFirestore();
     dispatch(savePostName(name));
     dispatch(savePostLocation(writtenLocation));
     dispatch(savePostPhoto(selectedPhoto));
-  };
-  const handleDelete = () => {
-    setName("");
-    setWrittenLocation("");
-    setSelectedPhoto(null);
-
-    // console.log(name, writtenLocation, selectedPhoto);
   };
 
   return (
@@ -223,23 +180,35 @@ export default function CreatePostsScreen() {
       <View style={styles.main}>
         <View style={styles.parent}>
           <View>
-            {selectedPhoto ? (
-              <>
-                <ImageBackground
-                  source={{ uri: selectedPhoto }}
-                  style={styles.camera}
-                  ref={setCameraRef}
-                >
-                  <View style={styles.photoViewSelected}>
-                    <TouchableOpacity
-                      style={styles.cameraButtonSelected}
-                      onPress={handleCameraPress}
-                    >
-                      <Ionicons name="camera" size={30} color="#fff" />
-                    </TouchableOpacity>
-                  </View>
-                </ImageBackground>
-              </>
+            {buttonPressCount == 0 ? (
+              <View style={styles.camera} ref={setCameraRef}>
+                <View style={styles.photoViewSelected}>
+                  <TouchableOpacity
+                    style={[
+                      styles.cameraButtonSelected,
+                      { backgroundColor: "lightgrey" },
+                    ]}
+                    onPress={handleCameraPress}
+                  >
+                    <Ionicons name="camera" size={30} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : selectedPhoto ? (
+              <ImageBackground
+                source={{ uri: selectedPhoto }}
+                style={styles.camera}
+                ref={setCameraRef}
+              >
+                <View style={styles.photoViewSelected}>
+                  <TouchableOpacity
+                    style={styles.cameraButtonSelected}
+                    onPress={handleCameraPress}
+                  >
+                    <Ionicons name="camera" size={30} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </ImageBackground>
             ) : (
               <Camera style={styles.camera} type={type} ref={setCameraRef}>
                 <View style={styles.photoView}>
@@ -253,17 +222,11 @@ export default function CreatePostsScreen() {
                       );
                     }}
                   >
-                    <Ionicons name="git-compare" size={20} color="#BDBDBD" />
+                    <Feather name="repeat" size={20} color="#BDBDBD" />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.cameraButton}
                     onPress={handleCameraPress}
-                    // onPress={async () => {
-                    //   if (cameraRef) {
-                    //     const { uri } = await cameraRef.takePictureAsync();
-                    //     await MediaLibrary.createAssetAsync(uri);
-                    //   }
-                    // }}
                   >
                     <Ionicons name="camera" size={30} color="#BDBDBD" />
                   </TouchableOpacity>
@@ -417,7 +380,7 @@ const styles = StyleSheet.create({
   },
   delete: {
     position: "absolute",
-    top: "140%",
+    top: "130%",
     right: "28%",
     transform: [{ translateX: -50 }, { translateY: -50 }],
     // bottom: -180,

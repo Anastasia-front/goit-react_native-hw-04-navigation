@@ -17,10 +17,11 @@ import Title from "../components/Title";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { loginDB } from "../../firebase/authorization";
-import { auth } from "firebase/auth";
+// import { useDispatch } from "react-redux";
 
 export default function Login({ onLogin }) {
   const navigation = useNavigation();
+  // const dispatch = useDispatch();
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [email, setEmail] = useState("");
@@ -69,6 +70,7 @@ export default function Login({ onLogin }) {
 
     if (validationError === "" && password !== "" && email !== "") {
       handleLogin();
+
       console.log(
         `Form submitted successfully! Email: ${email}, password: ${password}`
       );
@@ -81,10 +83,6 @@ export default function Login({ onLogin }) {
       onLogin();
       console.log("Login successful:", user); // Handle success
     } catch (error) {
-      // const { AuthErrorCodes } = auth;
-      // if (error.code === AuthErrorCodes.INVALID_PASSWORD) {
-      //   alert("Wrong password - try again!");
-      // }
       if (error.message === "Firebase: Error (auth/user-not-found)") {
         alert("This user is not registered yet!");
       }
@@ -134,12 +132,14 @@ export default function Login({ onLogin }) {
                   behavior={Platform.OS == "ios" ? "padding" : "height"}
                 >
                   <Input
+                    inputMode="email"
                     placeholder="Адреса електронної пошти"
                     value={email}
                     onChangeText={setEmail}
                     onBlur={validateEmail}
                   />
                   <Input
+                    inputMode="text"
                     placeholder="Пароль"
                     secureTextEntry={!showPassword}
                     value={password}

@@ -10,19 +10,18 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useDispatch } from "react-redux";
 import OverlayImage from "../components/OverlayImage";
 import CustomButton from "../components/Button";
 import Input from "../components/Input";
 import CustomLink from "../components/Link";
 import Title from "../components/Title";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { ActionSheetIOS } from "react-native";
 import { registerDB } from "../../firebase/authorization";
-// import { writeDataToFirestore } from "../../firebase/collections";
 import { savePhoto, saveName, saveEmail } from "../../redux/auth/authActions";
 
 export default function Registration({ onLogin }) {
@@ -86,7 +85,7 @@ export default function Registration({ onLogin }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     validateName();
     validateEmail();
     validatePassword();
@@ -97,11 +96,8 @@ export default function Registration({ onLogin }) {
       email !== "" &&
       password !== ""
     ) {
-      // writeDataToFirestore();
-      dispatch(saveName(name));
-      dispatch(saveEmail(email));
-      dispatch(savePhoto(avatar));
       handleRegister();
+
       console.log(
         `Form submitted successfully! Name: ${name}, email: ${email}, password: ${password}`
       );
@@ -112,6 +108,9 @@ export default function Registration({ onLogin }) {
     try {
       await registerDB({ email, password });
       onLogin();
+      dispatch(saveName(name));
+      dispatch(saveEmail(email));
+      dispatch(savePhoto(avatar));
       console.log("Registration successful"); // Handle success
     } catch (error) {
       if (error.message === "Firebase: Error (auth/email-already-in-use)") {
@@ -360,6 +359,7 @@ export default function Registration({ onLogin }) {
                   behavior={Platform.OS == "ios" ? "padding" : "height"}
                 >
                   <Input
+                    inputMode="text"
                     placeholder="Логін"
                     value={name}
                     onChangeText={setName}
@@ -368,6 +368,7 @@ export default function Registration({ onLogin }) {
                     }}
                   />
                   <Input
+                    inputMode="email"
                     placeholder="Адреса електронної пошти"
                     value={email}
                     onChangeText={setEmail}
@@ -375,6 +376,7 @@ export default function Registration({ onLogin }) {
                   />
                   <Input
                     placeholder="Пароль"
+                    inputMode="text"
                     secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={setPassword}
@@ -382,7 +384,7 @@ export default function Registration({ onLogin }) {
                     style={{ position: "relative" }}
                   />
                   <TouchableOpacity
-                    style={{ position: "absolute", top: 150, right: 20 }}
+                    style={{ position: "absolute", top: 148, right: 20 }}
                     onPress={togglePasswordVisibility}
                   >
                     <Text style={{ color: hidden }}>

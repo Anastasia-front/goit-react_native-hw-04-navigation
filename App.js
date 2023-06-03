@@ -35,21 +35,17 @@ const AuthNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
     </AuthStack.Navigator>
   );
 };
-
 const Tab = createBottomTabNavigator();
 const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
-  const navigation = useNavigation();
-
   const handleChange = () => {
     setIsLoggedIn(!isLoggedIn);
   };
-
+  const navigation = useNavigation();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === "Profile") {
             iconName = focused ? "ios-person" : "ios-person";
           } else if (route.name === "Add") {
@@ -187,10 +183,9 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
   );
 };
 
-const store = createStore(rootReducer);
-
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(authStateChanged());
+  const [isLoggedIn, setIsLoggedIn] = useState(updateUserProfile());
+  const store = createStore(rootReducer);
 
   return (
     <Provider store={store}>

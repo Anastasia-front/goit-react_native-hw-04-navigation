@@ -1,15 +1,14 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import Post from "../components/Post";
 import {
-  selectEmail,
-  selectAvatar,
   selectName,
-  selectPostLocation,
   selectPostName,
+  selectAvatar,
+  selectEmail,
+  selectPostLocation,
   selectPostPhoto,
 } from "../../redux/selectors";
-import { useDispatch, useSelector } from "react-redux";
-// import { PostsList } from "../components/PostList";
+import { useSelector } from "react-redux";
 
 const PostsScreen = () => {
   const name = useSelector(selectName);
@@ -18,7 +17,6 @@ const PostsScreen = () => {
   const postName = useSelector(selectPostName);
   const postPhoto = useSelector(selectPostPhoto);
   const postLocation = useSelector(selectPostLocation);
-  // const photo = require(`${avatar}`);
 
   return (
     <View style={styles.main}>
@@ -31,7 +29,6 @@ const PostsScreen = () => {
           </View>
         </View>
         <View style={{ marginTop: 30 }}>
-          {/* <PostsList /> */}
           <Post
             img={{ uri: postPhoto }}
             title={postName}

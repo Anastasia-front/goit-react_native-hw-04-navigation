@@ -6,7 +6,13 @@ import {
   Platform,
 } from "react-native";
 
-export default function Input({ placeholder, onChangeText, value }) {
+export default function Input({
+  placeholder,
+  onChangeText,
+  value,
+  secureTextEntry,
+  inputMode,
+}) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -21,6 +27,8 @@ export default function Input({ placeholder, onChangeText, value }) {
       behavior={Platform.OS == "ios" ? "padding" : "height"}
     >
       <TextInput
+        inputMode={inputMode}
+        secureTextEntry={secureTextEntry}
         style={[styles.input, isFocused && styles.inputFocused]}
         onFocus={handleFocus}
         onBlur={handleBlur}
