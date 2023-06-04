@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 16,
     color: "#fff",
   },
@@ -53,7 +53,7 @@ const style = StyleSheet.create({
   },
   text: {
     textAlign: "center",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 16,
     color: "#BDBDBD",
   },

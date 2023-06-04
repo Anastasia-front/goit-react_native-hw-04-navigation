@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   content: {
     color: "#212121",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 13,
     textAlign: "left",
     marginBottom: 10,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   dateTime: {
     color: "#BDBDBD",
     fontSize: 10,
-    fontWeight: 400,
+    fontWeight: "400",
     textAlign: "right",
   },
 });
@@ -85,7 +85,7 @@ const style = StyleSheet.create({
   },
   content: {
     color: "#212121",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 13,
     textAlign: "left",
     marginBottom: 10,
@@ -93,7 +93,7 @@ const style = StyleSheet.create({
   dateTime: {
     color: "#BDBDBD",
     fontSize: 10,
-    fontWeight: 400,
+    fontWeight: "400",
     textAlign: "right",
   },
 });

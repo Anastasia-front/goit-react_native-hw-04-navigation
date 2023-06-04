@@ -1,8 +1,16 @@
-import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "./config";
 
 export const writeDataToFirestore = async () => {
-  const collectionRef = collection(db, "user");
+  const uniquePostId = Date.now().toString();
+  const collectionRef = doc(db, "test", uniquePostId);
   const data = {
     email: "Ada",
     name: "Lovelace",
@@ -10,13 +18,7 @@ export const writeDataToFirestore = async () => {
     photo: "tbrtnb",
   };
   try {
-    const docRef = await addDoc(collectionRef, data);
-    // addDoc(collection(db, "users"), {
-    //   email: "Ada",
-    //   name: "Lovelace",
-    //   password: "1815",
-    //   photo: "tbrtnb",
-    // });
+    await setDoc(collectionRef, data);
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);

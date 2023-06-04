@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   name: {
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 30,
     textAlign: "center",
     letterSpacing: 0.01,

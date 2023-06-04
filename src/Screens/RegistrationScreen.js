@@ -111,7 +111,7 @@ export default function Registration({ onLogin }) {
       dispatch(saveName(name));
       dispatch(saveEmail(email));
       dispatch(savePhoto(avatar));
-      console.log("Registration successful"); // Handle success
+      console.log(name, email, avatar, "Registration successful"); // Handle success
     } catch (error) {
       if (error.message === "Firebase: Error (auth/email-already-in-use)") {
         alert("This user is registered already!");

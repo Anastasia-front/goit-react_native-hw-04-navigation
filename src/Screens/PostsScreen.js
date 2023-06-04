@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 15,
-    fontWeight: 700,
+    fontWeight: "700",
   },
-  email: { fontSize: 13, fontWeight: 400 },
+  email: { fontSize: 13, fontWeight: "400" },
 });
 
 export default PostsScreen;

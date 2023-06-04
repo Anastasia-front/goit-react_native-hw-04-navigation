@@ -10,7 +10,7 @@ const Title = ({ title, top }) => {
 const styles = StyleSheet.create({
   title: {
     marginBottom: 33,
-    fontWeight: 500,
+    fontWeight: "500",
     fontSize: 30,
     letterSpacing: 0.01,
   },

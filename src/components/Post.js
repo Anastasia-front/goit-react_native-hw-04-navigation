@@ -100,11 +100,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  text: { marginVertical: 7, color: "#212121", fontWeight: 500, fontSize: 18 },
+  text: {
+    marginVertical: 7,
+    color: "#212121",
+    fontWeight: "500",
+    fontSize: 18,
+  },
   number: { fontWeight: 400, fontSize: 16, color: "#BDBDBD" },
   location: {
     color: "#212121",
-    fontWeight: 400,
+    fontWeight: "400",
     fontSize: 16,
     textDecorationLine: "underline",
   },
