@@ -7,8 +7,8 @@ export default function Post({ img, title, location }) {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const [comments, setComments] = useState(0);
-  const [likes, setLikes] = useState(0);
+  const [comments, setComments] = useState(3);
+  const [likes, setLikes] = useState(6);
   const [numberOfClicks, setNumberOfClicks] = useState(0);
   const handleLike = () => {
     setLikes(likes + 1);

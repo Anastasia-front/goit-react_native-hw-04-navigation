@@ -184,7 +184,7 @@ const TabNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
 };
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(updateUserProfile());
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const store = createStore(rootReducer);
 
   return (
